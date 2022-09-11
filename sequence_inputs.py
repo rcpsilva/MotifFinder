@@ -9,7 +9,8 @@ def protein_to_series(seqs):
               'D':4,'E':5,
               'S':6,'T':7,'N':8,'Q':9,
               'C':10,'G':11,'P':12,
-              'A':13,'V':14,'I':15,'L':16,'M':17,'F':18,'Y':19,'W':20}
+              'A':13,'V':14,'I':15,'L':16,'M':17,'F':18,'Y':19,'W':20,
+              'X':21}
     
     return [[float(codes[a]) for a in s ] for s in seqs]
 

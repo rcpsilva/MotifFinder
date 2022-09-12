@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import sequence_processing as sp
 from matplotlib.patches import Rectangle
 import numpy as np
 import stumpy
@@ -46,3 +47,12 @@ def visualize_consensus_motifs(nseqs, m, Ts_idx, subseq_idx):
     plt.title('The Consensus Motif')
     plt.legend()
     plt.show()
+
+def consensus_motif(nseqs, m, Ts_idx, subseq_idx):
+    Ts = nseqs
+    seed_motif = Ts[Ts_idx][subseq_idx : subseq_idx + m]
+    return sp.series_to_proteins([seed_motif])
+
+    
+
+

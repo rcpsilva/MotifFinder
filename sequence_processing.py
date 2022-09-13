@@ -1,4 +1,7 @@
 from Bio import SeqIO
+import stumpy
+import numpy as np
+from copy import copy
 
 CODES = {'R':1,'H':2,'K':3,
               'D':4,'E':5,
@@ -18,15 +21,42 @@ def series_to_proteins(seqs):
     inv_codes = {v: k for k, v in CODES.items()}
     return [[inv_codes[a] for a in s ] for s in seqs]
 
+def get_n_motifs(seqs, m ,n):
+    
+    seqs = copy(seqs)
+    motifs = []
+    pos_in_seq = []
+    nans = [float('nan') for i in range(m)]
+
+    for i in range(n): 
+        # get consensus
+        radius, Ts_idx, subseq_idx = stumpy.ostinato(seqs, m)
+        seed_motif = seqs[Ts_idx][subseq_idx : subseq_idx + m]
+
+        motifs.append(copy(seed_motif))
+        
+
+        # remove consensus
+        position = []
+        for i, e in enumerate(seqs):
+            motif_idx = np.argmin(stumpy.core.mass(seed_motif, e))
+            seqs[i][motif_idx:(motif_idx+m)] = copy(nans)
+            position.append(motif_idx)
+
+        pos_in_seq.append(position)
+
+    return motifs , pos_in_seq
+        
+
 if __name__ == '__main__':
     seqs = get_sequences_from_fasta('test.fasta')
-    seqs_num = proteins_to_series(seqs)
-    print(seqs[0][1])
-    print(seqs_num[0][1])
+    seqs = proteins_to_series(seqs)
+    
+    m = 25
+    n = 2 
+    motifs = get_n_motifs(seqs, m , n)
 
-    print(len(seqs_num))
-    print(len(seqs_num[0]))
+    print(series_to_proteins(motifs))
 
-    seqs_new = series_to_proteins(seqs_num)
-    print(seqs_new)
+
 

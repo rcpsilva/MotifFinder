@@ -28,9 +28,9 @@ def get_n_motifs(seqs, m ,n):
     pos_in_seq = []
     nans = [float('nan') for i in range(m)]
 
-    for i in range(n): 
+    for j in range(n): 
         # get consensus
-        radius, Ts_idx, subseq_idx = stumpy.ostinato(seqs, m)
+        radius , Ts_idx, subseq_idx = stumpy.ostinato(copy(seqs), m)
         seed_motif = seqs[Ts_idx][subseq_idx : subseq_idx + m]
 
         motifs.append(copy(seed_motif))
@@ -39,7 +39,7 @@ def get_n_motifs(seqs, m ,n):
         position = []
         for i, e in enumerate(seqs):
             motif_idx = np.argmin(stumpy.core.mass(seed_motif, e))
-            seqs[i][motif_idx:(motif_idx+m)] = copy(nans)
+            seqs[i][motif_idx:(motif_idx+m)] = nans
             position.append(motif_idx)
 
         pos_in_seq.append(position)
@@ -48,14 +48,18 @@ def get_n_motifs(seqs, m ,n):
         
 
 if __name__ == '__main__':
-    seqs = get_sequences_from_fasta('test.fasta')
-    seqs = proteins_to_series(seqs)
+    seqs = get_sequences_from_fasta('samplefiles/test_small.fasta')
+    nseqs = proteins_to_series(seqs)
+    nseqs = nseqs[12:18]
     
-    m = 25
-    n = 2 
-    motifs = get_n_motifs(seqs, m , n)
+    m = 4
+    n = 3
+    motifs, pos_in_seq = get_n_motifs(nseqs, m , n)
 
+    print(motifs)
     print(series_to_proteins(motifs))
+
+    print(pos_in_seq)
 
 
 

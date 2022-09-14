@@ -2,6 +2,8 @@ from Bio import SeqIO
 import stumpy
 import numpy as np
 from copy import copy
+from tqdm import tqdm
+import math
 
 CODES = {'R':1,'H':2,'K':3,
               'D':4,'E':5,
@@ -21,17 +23,37 @@ def series_to_proteins(seqs):
     inv_codes = {v: k for k, v in CODES.items()}
     return [[inv_codes[a] for a in s ] for s in seqs]
 
-def get_n_motifs(seqs, m ,n):
+def get_top_motifs(seqs, m, n=[]):
     
+    """Returns the n top motifs. The number of returned motifs could be less than n if the algorithm cannot find n.
+
+    Args:
+      seqs: a list of aminoacid sequences
+      m: Motif length
+      n: Number of sought motifs
+
+    Returns:
+      motifs: list of motifs
+      pos_in_seq: positions of each motif in each sequence
+
+    Raises:
+    
+    """
+    n = len(seqs[0]) if not n else n
+
     seqs = copy(seqs)
     motifs = []
     pos_in_seq = []
     nans = [float('nan') for i in range(m)]
 
-    for j in range(n): 
+    print('Getting motifs...')
+    for j in tqdm(range(n)): 
         # get consensus
         radius , Ts_idx, subseq_idx = stumpy.ostinato(copy(seqs), m)
         seed_motif = seqs[Ts_idx][subseq_idx : subseq_idx + m]
+
+        if any(map(math.isnan, seed_motif)):
+            return motifs , pos_in_seq
 
         motifs.append(copy(seed_motif))
 
@@ -52,14 +74,16 @@ if __name__ == '__main__':
     nseqs = proteins_to_series(seqs)
     nseqs = nseqs[12:18]
     
-    m = 4
-    n = 3
-    motifs, pos_in_seq = get_n_motifs(nseqs, m , n)
+    m = 3
+    n = 40
+
+    motifs, pos_in_seq = get_top_motifs(nseqs, m , n)
 
     print(motifs)
+    print(pos_in_seq)
     print(series_to_proteins(motifs))
 
-    print(pos_in_seq)
+    
 
 
 

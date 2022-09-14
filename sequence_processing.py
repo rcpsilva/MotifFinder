@@ -34,7 +34,6 @@ def get_n_motifs(seqs, m ,n):
         seed_motif = seqs[Ts_idx][subseq_idx : subseq_idx + m]
 
         motifs.append(copy(seed_motif))
-        
 
         # remove consensus
         position = []

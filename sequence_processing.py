@@ -16,11 +16,11 @@ def get_sequences_from_fasta(input_file):
     seqs = SeqIO.parse(open(input_file),'fasta')
     return [s.seq for s in seqs]
 
-def proteins_to_series(seqs):
-    return [[float(CODES[a]) for a in s ] for s in seqs]
+def proteins_to_series(seqs,codes=CODES):
+    return [[float(codes[a]) for a in s ] for s in seqs]
 
-def series_to_proteins(seqs):
-    inv_codes = {v: k for k, v in CODES.items()}
+def series_to_proteins(seqs, codes=CODES):
+    inv_codes = {v: k for k, v in codes.items()}
     return [[inv_codes[a] for a in s ] for s in seqs]
 
 def get_top_motifs(seqs, m, n=[]):
@@ -82,8 +82,3 @@ if __name__ == '__main__':
     print(motifs)
     print(pos_in_seq)
     print(series_to_proteins(motifs))
-
-    
-
-
-
